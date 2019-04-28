@@ -5,7 +5,9 @@ bool selectObject = false;
 cv::Point origin;
 cv::Rect selection;
 int analyseRect = 0;
-int threshold = 10;
+int thresB = 10;
+int thresG = 10;
+int thresR = 10;
 
 
 static void onMouse( int event, int x, int y, int, void* );
@@ -26,7 +28,8 @@ int main(int argc, char *argv[])
     }
 
     //cv::Mat is the class for handling images in opencv 
-    cv::Mat imgOrig = cv::imread(fileName, CV_LOAD_IMAGE_GRAYSCALE);
+    //cv::Mat imgOrig = cv::imread(fileName, CV_LOAD_IMAGE_GRAYSCALE);
+    cv::Mat imgOrig = cv::imread(fileName, cv::IMREAD_COLOR);
     if (imgOrig.rows*imgOrig.cols <= 0)
     {
         std::cout << "Image " << fileName << " is empty or cannot be found\n";
@@ -35,7 +38,9 @@ int main(int argc, char *argv[])
     
     cv::namedWindow( "original image" );
     cv::setMouseCallback( "original image", onMouse, 0 );
-    cv::createTrackbar( "threshold", "original image", &threshold, 256, 0 );    
+    cv::createTrackbar( "threshold B", "original image", &thresB, 256, 0 );
+    cv::createTrackbar( "threshold G", "original image", &thresG, 256, 0 );
+    cv::createTrackbar( "threshold R", "original image", &thresR, 256, 0 );
     
     
     cv::Scalar avg(0);
@@ -61,8 +66,8 @@ int main(int argc, char *argv[])
         }
         
         if(analyseRect == 2) {
-            cv::inRange(img, cv::Scalar(avg[0]-threshold),
-                             cv::Scalar(avg[0]+threshold), mask);
+            cv::inRange(img, cv::Scalar(avg[0]-thresB, avg[1]-thresG, avg[2]-thresR),
+                             cv::Scalar(avg[0]+thresB, avg[1]+thresG, avg[2]+thresR), mask);
             cv::imshow("mask image", mask);
         }
         
